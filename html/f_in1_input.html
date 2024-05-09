@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花库存管理系统-入库页面</title>
+    <link rel="stylesheet" href="../css/f_in_input.css">
+    <link rel="shortcut icon" href="../img/logo.png"/>
+</head>
+
+<body>
+    <!--顶部logo和标题-->
+    <div class="top">
+        <a class="logo" href="../html/personalPage.html">
+            <img src="../img/logo.png">
+    </a>
+        <div class="title">
+            <h1>鲜花库存管理系统</h1>
+        </div>
+    </div>
+    <!--下部主体区域-->
+    <div class="main">
+        <!--左部导航栏-->
+        <div class="left">
+            <ul>
+                <li><a href="../html/index1.html">鲜花</a></li>
+                <!-- <li><a href="../html/f_out1.html">出库</a></li> -->
+                <li><a href="../html/f_in1.html">入库</a></li>
+                <li><a href="../html/provider1.html">供应商</a></li>
+                <li><a href="../html/f_out1.html">折扣区</a></li>
+                <li style="background-color: #a55199;"><a href="../html/f_in1.html">日销售量统计</a></li>
+                <li><a href="../html/user1.html">员工</a></li>
+            </ul>
+        </div>
+        <!--右部主体区域-->
+        <div class="right">
+            <!--透明色背景-->
+            <div class="right1">
+                <!--搜索框-->
+                <form class="getInput">
+                    <div class="search">
+                        <input type="text" id="idProvider" name="i_id" placeholder="根据入库ID查询">
+                        <div class="search2" id="searchInput">
+                            搜索
+                        </div>
+                    </div>
+                </form>
+                <!--添加信息图标-->
+                <!--<div class="increase" id="showPopup">
+                    <img src="../img/添加.png">
+                </div>-->
+                <!--弹出框-->
+                <table cellpadding="10" class="tableFlower">
+                    <tr>
+                        <td>入库ID</td>
+                        <td>鲜花ID</td>
+                        <td>入库数量</td>
+                        <td>入库时间</td>
+                        <td>员工ID</td>
+                        <td>供应商ID</td>
+                    </tr>
+                    <tr id="result"></tr>
+                </table>
+
+                <div id="overlay">
+                    <div class="popup">
+                        <p class="popup_title">提示</p>
+                        <p class="popup_content">请输入入库信息</p>
+                        <form class="inseart_f">
+                            <input type="text" placeholder="鲜花ID" name="f_id" id="f_id" class="f_id1"></br>
+                            <input type="text" placeholder="入库数量" name="i_num" id="i_num" class="i_num1"></br>
+                            <input type="text" placeholder="入库时间" name="i_date" id="i_date" class="i_date1"></br>
+                            <input type="text" placeholder="员工ID" name="u_id" id="u_id" class="u_id1"></br>
+                            <input type="text" placeholder="供应商ID" name="p_id" id="p_id" class="p_id1"></br>
+                            <div class="popup_btn">
+                                <button id="cancl1" class="cancelBtn">取消</button>
+                                <button id="cancl2" class="increaseButton">确认</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+<script type="module" src="../js/f_in1_input.js"></script>
+
+</html>

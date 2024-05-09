@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花库存管理系统-供应商页面</title>
+    <link rel="stylesheet" href="../css/provider.css">
+    <link rel="shortcut icon" href="../img/logo.png"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="../static/vue.js"></script>
+</head>
+
+<body>
+<div class="sideBar">
+    <div>
+        <div class="tips">在线客服</div>
+        <ul class="list">
+            <li>tel:1846492969</li>
+            <li>tel:1846492969</li>
+        </ul>
+    </div>
+</div>
+    <!--顶部logo和标题-->
+    <div class="top">
+        <a class="logo" href="../html/personalPage.html">
+            <img src="../img/logo.png">
+    </a>
+        <div class="title">
+            <h1>鲜花库存管理系统</h1>
+        </div>
+    </div>
+    <!--下部主体区域-->
+    <div class="main" id="app">
+        <div class="main-address">
+            <img src="../static/address.svg" alt="" @click="getAddrssFun">
+            <p>{{address}}</p>
+        </div>
+        <!--左部导航栏-->
+        <div class="left">
+            <ul>
+                <li style="background-color: #b17aa1"><a href="../html/index1.html">鲜花</a></li>
+                <li><a href="../html/f_out1.html">折扣区</li>
+                <li><a href="../html/f_in1.html">日销售量统计</a></li>
+                <li><a href="../html/provider1.html">供应商</a></li>
+                <li style="background-color: #a55199;"><a href="../html/input.html">入库</a></li>
+                <li><a href="../html/user1.html">用户</a></li>
+            </ul>
+        </div>
+        <!--右部主体区域-->
+        <div class="right">
+            <!--透明色背景-->
+            <div class="right1">
+                <!--搜索框-->
+                <form class="getProvider">
+                    <div class="search">
+                        <input type="text" id="idProvider" v-model="idProvider" name="p_id" placeholder="根据入库id查询">
+                        <div class="search2" id="searchProvider" @click="search">
+                            搜索
+                        </div>
+                        <!--添加信息图标-->
+                        <div class="" id="showPopup">
+                            <img src="../img/添加.png" @click="openAddFun">
+                        </div>  
+                    </div>
+                  
+                </form>
+
+                <div class="tableList">
+                    <table cellpadding="10" class="tableFlower">
+                        <thead>
+                        <tr>
+                            <td>入库ID</td>
+                            <td>鲜花ID</td>
+                            <td>入库数量</td>
+                            <td>入库时间</td>
+                            <td>员工ID</td>
+                            <td>供应商ID</td>
+                        </tr>
+                        </thead>
+                        <tbody id="result"></tbody>
+                    </table>
+                </div>
+                <!--弹出框--  v-show="showOverlay-->
+                <div id="overlay1" v-show="showOverlay1" v-cloak>
+                    <div class="popup">
+                        <p class="popup_title">提示</p>
+                        <p class="popup_content">请输入入库信息</p>
+                        <form class="inseart_f">
+                            <input type="text" v-model="f_id" placeholder="鲜花ID" name="f_id" id="f_id" class="f_id1"></br>
+                            <input type="text" v-model="i_num" placeholder="入库数量" name="i_num" id="i_num" class="i_num1"></br>
+                            <input type="text" v-model="i_date" placeholder="入库时间" name="i_date" id="i_date" class="i_date1"></br>
+                            <input type="text" v-model="u_id" placeholder="员工ID" name="u_id" id="u_id" class="u_id1"></br>
+                            <input type="text" v-model="p_id" placeholder="供应商ID" name="p_id" id="p_id" class="p_id1"></br>     
+                            <div class="popup_btn">
+                                <button id="cancl1" type="button" class="cancelBtn" @click="cancelBtn">取消</button>
+                                <button id="cancl2" type="button" class="increaseButton" @click="increaseButton">确认</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<!--<script type="module" src="../js/provider1.js"></script>-->
+<script type="module">
+    import ajax from '../js/ajax.js'
+    // import axios from 'axios';
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            goodsList: [],
+            idProvider:'',
+            address:'',
+            showOverlay1: false,
+            f_id:'',
+            i_num:'',
+            i_date:'',
+            u_id:'',
+            p_id:''
+        },
+        mounted() {
+            this.queryAllProvider();
+            this.getAddrssFun();
+        },
+        methods: {
+            increaseButton() {
+                axios.get(`http://localhost:8080/f_in?f_id=${this.f_id}&i_num=${this.i_num}
+                &i_date=${this.i_date}&u_id=${this.u_id}&p_id=${this.p_id}`).then(res =>{
+                    this.showOverlay1 = false;
+                    location.reload();
+                    console.log(res.data)
+                }).catch(() => {
+                    alert("新增失败, 不存在此花朵id！")
+                    this.showOverlay1 = false;
+                    location.reload();
+                })
+            },
+            openAddFun() {
+                console.log("123",this.showOverlay1)
+                this.showOverlay1 = true;
+            },
+            cancelBtn() {
+                this.showOverlay = false;
+            },
+            queryAllProvider() {
+                let data = [];
+                axios.get("http://localhost:8080/queryAllInput").then(res =>{
+                    console.log(res.data)
+                    this.goodsList = res.data;
+                    let str = ``;
+                    this.goodsList.map(item =>{
+                         str += '<tr><td>' + item.i_id + '</td><td>' + item.f_id + '</td><td>' + item.i_num + '</td><td>' + item.i_date + '</td><td>' + item.u_id + '</td><td>' + item.p_id + '</td></tr>'
+                    })
+                    console.log(str)
+                    document.querySelector('#result').innerHTML = str;
+                })
+
+            },
+            search() {
+                axios.get(`http://localhost:8080/queryInput?i_id=${this.idProvider}`).then(res =>{
+                    console.log(res.data)
+                    this.goodsList = res.data;
+                    let str = ``;
+                    this.goodsList.map(item =>{
+                        str += '<tr><td>' + item.i_id + '</td><td>' + item.f_id + '</td><td>' + item.i_num + '</td><td>' + item.i_date + '</td><td>' + item.u_id + '</td><td>' + item.p_id + '</td></tr>'
+                     })
+                    console.log(str)
+                    document.querySelector('#result').innerHTML = str;
+                })
+            },
+            getAddrssFun() {
+                axios.get(`http://localhost:8080/getGeo`).then(res =>{
+                    console.log(res.data)
+                    const spaceIndex = (res.data).indexOf(' ');
+                    if (spaceIndex !== -1) {
+                        // 如果找到了空格，则返回空格之前的子字符串
+                        this.address = (res.data).substring(0, spaceIndex);
+                    } else {
+                        // 如果没有找到空格，则返回原字符串
+                        this.address = (res.data)
+                    }
+                })
+            }
+        }
+    })
+</script>
+
+<style>
+    /*弹出框*/
+ /* 遮罩层 */
+ #overlay1 {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    /* IE9以下不支持rgba模式 */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 兼容IE8及以下 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#7f000000,endColorstr=#7f000000);
+    /* display: none; */
+  }
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+
+</html>

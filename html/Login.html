@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花库存管理系统-登陆</title>
+    <link rel="stylesheet" type="text/css" href="../css/Login.css">
+    <link rel="shortcut icon" href="../img/logo.png"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="../static/vue.js"></script>
+</head>
+<body>
+    <div class="bg" id="app">
+        <!-- 标题 -->
+        <div class="title">
+            &nbsp;&nbsp;
+            MANAGE</br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            FLOWER～
+        </div>
+
+        <!-- 插画 -->
+        <div class="illustration">
+            <img src="../static/登录页面插画.jpg">
+        </div>
+
+        <div class="flowerpic">
+            <img src="../static/花朵.png">
+        </div>
+
+        <!-- 登录框 -->
+        <div class="LoginBox">
+            <div class="hello">HELLO</div>
+
+            <!-- 输入用户密码 -->
+            <form class="loginin">
+            <div class="user">
+                <div class="username">
+                    <img src="../static/登陆.svg">
+                    <input class="putinUsername" type="text" name="u_name" placeholder="请输入用户名" ref="u_name">
+                </div>
+                <div class="password">
+                    <img src="../static/3 登录密码.svg">
+                    <input class="putinPassword" type="password" name="u_password" placeholder="请输入密码" ref="u_pass">
+                </div>
+
+                <div class="login-radio">
+                    <span><input type="radio" v-model="radioVal" value="0" name="1" checked="checked" >买家</span>
+                    <span><input type="radio" v-model="radioVal" value="1" name="1" checked="checked">卖家</span>
+                </div>
+
+                <div class="verificationCode">
+                    <input placeholder="请输入验证码" id="inputVer" name="u_input_ver" ref="u_code">
+                    <img alt="验证码" id="code1" @click="getCode1()"/>
+                </div>
+
+            </div>
+            <!-- <div class="Button"> -->
+                <!-- 登录按钮 -->
+                <!-- <div class="loginButtom">
+                    <a href="./personal.html">LOGIN</a>
+                </div> -->
+                <div class="loginButton" @click="loginFun">登录</div>
+                <!-- 注册按钮 -->
+                <!-- <div class="registerButtom">
+                    REGISTER
+                </div> -->
+            </form>
+
+                <div id="showPopup1"  class="registerButton" @click="registerFun">注册</div>
+                    <div id="overlay" v-show="showRegister" v-cloak>
+                        <div class="popup">
+                          <p class="popup_title">提示</p>
+                          <p class="popup_content">请输入注册信息</p>
+                            <div class="item_bock head_p">
+                                <div class="head_img">
+                                    <img :src="userInfo.avatar" @click.stop="uploadHeadImg"/>
+                                </div>
+                                <input type="file" accept="image/*" @change="handleFile" class="hiddenInput" enctype="multipart/form-data"/>
+                            </div>
+                          <form class="registst">
+                          <input id="registName" class="registAccount" type="text" name="u_name" v-model="form.u_name" placeholder="         注册账号" value>
+                          <input id="registPsd" class="registPassword" type="text" name="u_password" v-model="form.u_password" placeholder="         注册密码" value>
+                          <input id="registAu" class="registAu" type="text" name="u_au" v-model="form.u_au" placeholder="         注册权限（0为买家 1为卖家）" value>
+                          <input id="registTel" class="registTel" type="text" name="u_tel" v-model="form.u_tel" placeholder="         联系方式" value>
+                          <div class="popup_btn">
+                            <button type="button" id="yc1" class="cancelBtn" @click="hidePopup">取消</button>
+                            <button type="button" id="yc2" class="registButton" @click="registPopup">确认</button>
+                            </form>
+                          </div>
+                    </div>
+             </div>
+
+        </div>
+    </div>
+</body>
+
+
+
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+
+
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+
+<script type="module" src="../js/login.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="./static/axios/index.js"></script>
+<script type="module">
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            radioVal: 0,
+            showRegister: false,
+            userInfo: {
+                avatar: ''
+            },
+            file: '',
+            form:{
+                u_password: '',
+                u_tel: '',
+                u_name: '',
+                u_au: ''
+            }
+        },
+        mounted() {
+            this.getCode1();
+        },
+        methods: {
+            loginFun() {
+                axios.get(`http://localhost:8080/login?u_name=${this.$refs.u_name.value}&u_password=${this.$refs.u_pass.value}&u_ver_code=${this.$refs.u_code.value}&u_au=${this.radioVal}`).then(res =>{
+                    console.log(res.data)
+                    localStorage.setItem("u_name", res.data.u_name);
+                    localStorage.setItem("u_password", res.data.u_password);
+                    localStorage.setItem("u_ver_code", res.data.u_ver_code);
+                    localStorage.setItem("u_au", res.data.u_au);
+                    localStorage.setItem("userId", res.data.u_id);
+                        if (this.radioVal == 0) {
+                            window.location.href = "./index0.html";
+                        } else if (this.radioVal == 1) {
+                            window.location.href = "./index1.html";
+                        }
+                }).catch(() =>{
+                    alert('用户信息错误，请重新输入！')
+                })
+            },
+            getCode1() {
+                var url = "http://localhost:8080/getcode";
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.responseType = "blob";
+                xhr.onload = function () {
+                    if (this.status === 200) {
+                        var res = this.response;
+                        $("#code1").attr("src", window.URL.createObjectURL(res));
+                    }
+                };
+                xhr.send();
+            },
+            registerFun() {
+                this.showRegister = true;
+            },
+            hidePopup() {
+                this.showRegister = false;
+            },
+
+            // 打开图片上传
+            uploadHeadImg: function () {
+                this.$el.querySelector('.hiddenInput').click()
+            },
+            // 将头像显示
+            handleFile: function (e) {
+                let $target = e.target || e.srcElement
+                console.log(e, $target.files[0], 777)
+                let file = $target.files[0]
+                this.file = file;
+                var reader = new FileReader()
+                reader.onload = (data) => {
+                    let res = data.target || data.srcElement
+                    this.userInfo.avatar = res.result
+                }
+                reader.readAsDataURL(file)
+            },
+            registPopup() {
+                const file = new FormData();
+                file.append('file', this.file);
+                console.log(file, 'file', this.file)
+                axios.post(`http://localhost:8080/file/upload`, file).then(res =>{
+                    console.log(res.data)
+                    this.saveUser(res.data);
+                })
+            },
+            saveUser(val) {
+                axios.post(`http://localhost:8080/register?u_name=${this.form.u_name}&u_password=${this.form.u_password}&u_au=${this.form.u_au}&u_tel=${this.form.u_tel}&u_url=${val}`).then(res =>{
+                    console.log(res.data)
+                    alert('注册成功');
+                    location.reload();
+                })
+            }
+
+
+        }
+    })
+</script>
+</html>

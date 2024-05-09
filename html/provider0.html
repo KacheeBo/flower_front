@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花库存管理系统-供应商页面</title>
+    <link rel="stylesheet" href="../css/provider.css">
+    <link rel="shortcut icon" href="../img/logo.png"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="../static/vue.js"></script>
+</head>
+
+<body>
+<div class="sideBar">
+    <div>
+        <div class="tips">在线客服</div>
+        <ul class="list">
+            <li>tel:1846492969</li>
+            <li>tel:1846492969</li>
+        </ul>
+    </div>
+</div>
+<!--顶部logo和标题-->
+<div class="top">
+    <a class="logo" href="../html/personalPage.html">
+        <img src="../img/logo.png">
+    </a>
+    <div class="title">
+        <h1>鲜花库存管理系统</h1>
+    </div>
+</div>
+<!--下部主体区域-->
+<div class="main" id="app">
+    <div class="main-address">
+        <img src="../static/address.svg" alt="" @click="getAddrssFun">
+        <p>{{address}}</p>
+    </div>
+    <!--左部导航栏-->
+    <div class="left">
+        <ul>
+            <li style="background-color: #b17aa1"><a href="../html/index0.html">鲜花</a></li>
+            <li><a href="../html/f_out0.html">折扣区</li>
+            <li style="background-color: #a55199;"><a href="../html/provider0.html">供应商</a></li>
+            <li><a href="../html/user0.html">订单</a></li>
+        </ul>
+    </div>
+    <!--右部主体区域-->
+    <div class="right">
+        <!--透明色背景-->
+        <div class="right1">
+            <!--搜索框-->
+            <form class="getProvider">
+                <div class="search">
+                    <input type="text" id="idProvider" v-model="idProvider" name="p_id" placeholder="根据供应商名称查询">
+                    <div class="search2" id="searchProvider" @click="search">
+                        搜索
+                    </div>
+                </div>
+            </form>
+            <div class="tableList">
+                <table cellpadding="10" class="tableFlower">
+                    <thead>
+                    <tr>
+                        <td>供应商ID</td>
+                        <td>供应商名称</td>
+                        <td>供应商电话</td>
+                        <td>供应商地址</td>
+                    </tr>
+                    </thead>
+                    <tbody id="result"></tbody>
+                </table>
+            </div>
+            <!--弹出框-->
+            <div id="overlay">
+                <div class="popup">
+                    <p class="popup_title">提示</p>
+                    <p class="popup_content">请输入供应商信息</p>
+                    <form class="inseart_f">
+                        <input type="text" placeholder="供应商名称" name="p_name" id="p_name" class="p_name1"></br>
+                        <input type="text" placeholder="供应商电话" name="p_tel" id="p_tel" class="p_tel1"></br>
+                        <input type="text" placeholder="供应商地址" name="p_add" id="p_add" class="p_add1"></br>
+                        <div class="popup_btn">
+                            <button id="cancl1" class="cancelBtn">取消</button>
+                            <button id="cancl2" class="increaseButton">确认</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<!--<script type="module" src="../js/provider1.js"></script>-->
+<script type="module">
+    import ajax from '../js/ajax.js'
+    // import axios from 'axios';
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            goodsList: [],
+            idProvider:'',
+            address:''
+        },
+        mounted() {
+            this.queryAllProvider();
+            this.getAddrssFun();
+        },
+        methods: {
+            queryAllProvider() {
+                let data = [];
+                axios.get("http://localhost:8080/queryAllProvider").then(res =>{
+                    console.log(res.data)
+                    this.goodsList = res.data;
+                    let str = ``;
+                    this.goodsList.map(item =>{
+                        str += '<tr><td>' + item.p_id + '</td><td>' + item.p_name + '</td><td>' + item.p_tel + '</td><td>' + item.p_add + '</td></tr>'
+                    })
+                    console.log(str)
+                    document.querySelector('#result').innerHTML = str;
+                })
+
+            },
+            search() {
+                axios.get(`http://localhost:8080/queryProvider?pName=${this.idProvider}`).then(res =>{
+                    console.log(res.data)
+                    this.goodsList = res.data;
+                    let str = ``;
+                    this.goodsList.map(item =>{
+                        str += '<tr><td>' + item.p_id + '</td><td>' + item.p_name + '</td><td>' + item.p_tel + '</td><td>' + item.p_add + '</td></tr>'
+                    })
+                    console.log(str)
+                    document.querySelector('#result').innerHTML = str;
+                })
+            },
+            getAddrssFun() {
+                axios.get(`http://localhost:8080/getGeo`).then(res =>{
+                    console.log(res.data)
+                    const spaceIndex = (res.data).indexOf(' ');
+                    if (spaceIndex !== -1) {
+                        // 如果找到了空格，则返回空格之前的子字符串
+                        this.address = (res.data).substring(0, spaceIndex);
+                    } else {
+                        // 如果没有找到空格，则返回原字符串
+                        this.address = (res.data)
+                    }
+                })
+            }
+        }
+    })
+</script>
+
+</html>

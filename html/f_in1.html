@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花库存管理系统-入库页面</title>
+    <link rel="stylesheet" href="../css/flower.css">
+    <link rel="stylesheet" href="../css/f_in.css">
+    <link rel="shortcut icon" href="../img/logo.png"/>
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="../static/vue.js"></script>
+</head>
+
+<body>
+<div class="sideBar">
+    <div>
+        <div class="tips">在线客服</div>
+        <ul class="list">
+            <li>tel:1846492969</li>
+            <li>tel:1846492969</li>
+        </ul>
+    </div>
+</div>
+    <!--顶部logo和标题-->
+    <div class="top">
+        <a class="logo" href="../html/personalPage.html">
+            <img src="../img/logo.png">
+    </a>
+        <div class="title">
+            <h1>鲜花库存管理系统</h1>
+        </div>
+    </div>
+    <!--下部主体区域-->
+    <div class="main" id="app">
+        <div class="tableList" v-show="showList" v-cloak>
+            <div style="font-size: 30px; position: fixed; right: 366px; cursor: pointer" @click="listCloseFun">×</div>
+            <table cellpadding="10" class="tableFlower">
+                <thead>
+                <tr>
+                    <td>花朵名称</td>
+                    <td>买家</td>
+                    <td>地址</td>
+                    <td>电话</td>
+                    <td>下单时间</td>
+                    <td>价格</td>
+                    <td>是否发货</td>
+                </tr>
+                </thead>
+                <tbody id="result"></tbody>
+            </table>
+        </div>
+        <div class="main-address">
+            <img src="../static/address.svg" alt="" @click="getAddrssFun">
+            <p>{{address}}</p>
+        </div>
+        <!--左部导航栏-->
+        <div class="left">
+            <ul>
+                <li style="background-color: #b17aa1"><a href="../html/index1.html">鲜花</a></li>
+                <li><a href="../html/f_out1.html">折扣区</a></li>
+                <li style="background-color: #a55199;"><a href="../html/f_in1.html">日销售量统计</a></li>
+                <li><a href="../html/provider1.html">供应商</a></li>
+                <li><a href="../html/input.html">入库</a></li>
+                <li><a href="../html/user1.html">用户</a></li>
+            </ul>
+        </div>
+        <div class="right">
+            <!--透明色背景-->
+            <div class="right1">
+                <div class="contentBG">
+                    <div
+                            class="echart"
+                            ref="mychart"
+                            id="mychart"
+                            :style="{ float: 'left', width: '100%', height: '400px',marginTop: '100px'}"
+                    ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<!--<script type="module" src="../js/f_in1.js"></script>-->
+<script type="module">
+    import ajax from '../js/ajax.js'
+    // import axios from 'axios';
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            address:'',
+            showList: false,
+            option: {
+                title: {
+                    left: 'center',
+                    text: '日销售量统计'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false
+                },
+                yAxis: {
+                    type: 'value',
+                    boundaryGap: [0, '30%']
+                },
+                visualMap: {
+                    type: 'piecewise',
+                    show: false,
+                    dimension: 0,
+                    seriesIndex: 0,
+                    pieces: [
+                        {
+                            gt: 1,
+                            lt: 3,
+                            color: 'rgba(0, 0, 180, 0.4)'
+                        },
+                        {
+                            gt: 5,
+                            lt: 7,
+                            color: 'rgba(0, 0, 180, 0.4)'
+                        }
+                    ]
+                },
+                series: [
+                    {
+                        type: 'line',
+                        smooth: 0.6,
+                        showSymbol: true,//是否默认展示圆点
+                        lineStyle: {
+                            color: '#5470C6',
+                            width: 5
+                        },
+                        // markLine: {
+                        //     symbol: ['none', 'none'],
+                        //     label: { show: false },
+                        //     data: [{ xAxis: 1 }, { xAxis: 3 }, { xAxis: 5 }, { xAxis: 7 }]
+                        // },
+                        areaStyle: {},
+                        data: [
+
+                        ]
+                    }
+                ]
+            }
+        },
+        mounted() {
+            this.getAddrssFun();
+            const myChart = echarts.init(this.$refs.mychart);// 图标初始化
+            //随着屏幕大小调节图表
+            window.addEventListener("resize", () => {
+                myChart.resize();
+            });
+            this.init(myChart);
+        },
+        methods: {
+            init(myChart) {
+                const userId = localStorage.getItem("userId");
+                axios.get("http://localhost:8080/listOrderInfoByUid" + "?u_id=" + userId).then(res =>{
+                    console.log(res.data)
+                    let data = [];
+                    res.data.map(item =>{
+                        let arr = [item.orderDate, item.orderCount];
+                        data.push(arr)
+                    })
+                    console.log(data)
+                    this.option.series[0].data = data
+                    console.log(this.option.series)
+                    myChart.setOption(this.option);// 渲染页面
+                    myChart.on('click', params => {
+                        console.log('点击数据点：', params.data);
+                        this.showList = true;
+                        if (params.data && params.data[0]) {
+                            axios.get(`http://localhost:8080/listOrderInfo?Date=${params.data[0]}`).then(res =>{
+                                console.log(res.data)
+                                let str = ``;
+                               res.data.map(item =>{
+                                    // let time = (item.create_time).slice(0, 10)
+                                   let res = item.to_ship == 0 ? '未发货' : '已发货'
+                                    str += '<tr><td>' + item.f_name + '</td><td>' + item.u_name + '</td><td>' + item.address + '</td><td>' + item.tel + '</td><td>' + item.time + '</td><td>' + item.price + '</td><td><div class="fahuo" id=' + item.id +'>' + res + '</div></td></tr>'
+                                   console.log(str)
+
+                               })
+                                console.log(str)
+                                document.querySelector('#result').innerHTML = str;
+                               res.data.map(i => {
+                                   let button = document.getElementById(i.id)
+                                   console.log(button)
+                                   button.addEventListener('click', function(e) {
+                                       if (i.to_ship == 0) {
+                                           axios.get(`http://localhost:8080/toShip?orderId=${e.target.id}`).then(res =>{
+                                               alert("发货成功!");
+                                               console.log(res.data)
+                                               axios.get(`http://localhost:8080/listOrderInfo?Date=${params.data[0]}`).then(res =>{
+                                                   console.log(res.data)
+                                                   let str = ``;
+                                                   res.data.map(item =>{
+                                                       let time = (item.create_time).slice(0, 10)
+                                                       let res = item.to_ship == 0 ? '未发货' : '已发货'
+                                                       str += '<tr><td>' + item.f_name + '</td><td>' + item.u_name + '</td><td>' + item.address + '</td><td>' + item.tel + '</td><td>' + time + '</td><td>' + item.price + '</td><td><div class="fahuo" id=' + item.id +'>' + res + '</div></td></tr>'
+                                                       console.log(str)
+
+                                                   })
+                                                   console.log(str)
+                                                   document.querySelector('#result').innerHTML = str;
+                                               })
+                                           })
+                                       }
+                                   });
+                               })
+
+                            })
+                        }
+                    });
+                })
+            },
+            getAddrssFun() {
+                axios.get(`http://localhost:8080/getGeo`).then(res =>{
+                    console.log(res.data)
+                    const spaceIndex = (res.data).indexOf(' ');
+                    if (spaceIndex !== -1) {
+                        // 如果找到了空格，则返回空格之前的子字符串
+                        this.address = (res.data).substring(0, spaceIndex);
+                    } else {
+                        // 如果没有找到空格，则返回原字符串
+                        this.address = (res.data)
+                    }
+                })
+            },
+            listCloseFun() {
+                this.showList = false;
+            }
+        }
+    })
+</script>
+
+</html>

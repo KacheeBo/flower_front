@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花库存管理系统-个人主页</title>
+
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/page.css">
+    <link rel="shortcut icon" href="../img/logo.png"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="../static/vue.js"></script>
+</head>
+<body>
+    <!-- <div class="back">
+        <img src="../static/返回.svg">
+    </div> -->
+    <div class="box" id="app">
+        <div class="blank" id="backLogo">
+            <div class="back">
+                <img  @click="backGo" src="../static/back.svg">
+            </div>
+        </div>
+        <div class="photo">
+            <div class="item_bock head_p">
+                <div class="head_img">
+                    <img :src="userInfo.avatar" @click.stop="uploadHeadImg"/>
+                </div>
+                <input type="file" accept="image/*" @change="handleFile" class="hiddenInput" enctype="multipart/form-data"/>
+            </div>
+        </div>
+        
+        <div class="information">
+            <h2 class="infoname">欢迎 ~ {{form.u_name}}</h2>
+        </div>
+        <div class="modify">
+            <form class="content">
+                <p style="top:75px">姓名：</p>
+                <input name="u_name" v-model="form.u_name" type="text" style="top: 100px;">
+                <p style="top: 175px;">联系电话：</p>
+                <input name="u_tel" v-model="form.u_tel" type="text" style="top: 200px;">
+                <p style="top: 275px;">密码：</p>
+<!--                <input name="u_password" v-model="form.u_password" type="text" style="top: 300px;">-->
+                <input name="u_password" v-model.trim="form.u_password" :type="pwdType" style="top: 300px;">
+<!--                <div>-->
+<!--                    <input :type="pwdType" placeholder="请输入密码" v-model="form.u_password" />-->
+<!--                    <img :src="seen?openeye:nopeneye" alt @click="changeType()" />-->
+<!--                </div>-->
+                <br>
+                <button type="button" class="button" @click="registPopup">确认修改</button>
+            </form>
+        </div>
+        <div >
+            <img class="openeyes" src="./../static/openeyes.svg" @click="changeType()">
+        </div>
+    </div>
+
+</body>
+
+
+
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<script type="module" src="../js/personalPage.js"></script>
+<script type="module">
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            radioVal: 0,
+            showRegister: false,
+            userInfo: {
+                avatar: ''
+            },
+            file: '',
+            form:{
+                u_password: '',
+                u_tel:'',
+                u_name: ''
+            },
+            // openeye: require("./../static/openeyes.svg"), //小眼睛图片地址
+            // nopeneye: require("./../static/openeyes.svg1"),
+            pwdType: "password"
+        },
+        mounted() {
+            this.getData();
+        },
+        methods: {
+            getData() {
+                const userId = localStorage.getItem("userId");
+                axios.get(`http://localhost:8080/queryUser?u_id=${userId}`).then(res =>{
+                    console.log(res.data)
+                    this.form = res.data[0];
+                    this.userInfo.avatar = res.data[0].u_url;
+                })
+            },
+            changeType() {
+                this.pwdType = this.pwdType === "password" ? "text" : "password";
+                console.log("pwd ", this.pwdType)
+                // this.seen = !this.seen; //小眼睛的变化,切换图片
+            },
+            // 打开图片上传
+            uploadHeadImg: function () {
+                console.log(999)
+                this.$el.querySelector('.hiddenInput').click()
+            },
+            // 将头像显示
+            handleFile: function (e) {
+                let $target = e.target || e.srcElement
+                console.log(e, $target.files[0], 777)
+                let file = $target.files[0]
+                this.file = file;
+                var reader = new FileReader()
+                reader.onload = (data) => {
+                    let res = data.target || data.srcElement
+                    this.userInfo.avatar = res.result
+                }
+                reader.readAsDataURL(file)
+            },
+            registPopup() {
+                if (this.file) {
+                    const file = new FormData();
+                    file.append('file', this.file);
+                    console.log(file, 'file', this.file)
+                    axios.post(`http://localhost:8080/file/upload`, file).then(res =>{
+                        console.log(res.data)
+                        if (res.data) {
+                            this.saveUser(res.data);
+                        }
+                    })
+                } else {
+                    this.saveUser()
+                }
+            },
+            saveUser(val) {
+                console.log(val);
+                const userId = localStorage.getItem("userId");
+                let data = {
+                    ...this.form,
+                    u_url: val || this.userInfo.avatar,
+                    u_id: userId
+                }
+                axios.post(`http://localhost:8080/modifyUser`, data).then(res =>{
+                    console.log(res.data)
+                    this.form = res.data[0];
+                    this.userInfo.avatar = res.data[0].u_url;
+                    alert('修改成功！');
+                    location.reload();
+                })
+            },
+            backGo() {
+                const u_au = localStorage.getItem("u_au");
+                console.log(u_au)
+                if (u_au == 0) {
+                    window.location.href = "./index0.html";
+                } else if (u_au == 1) {
+                    window.location.href = "./index1.html";
+                }
+            }
+
+        }
+    })
+</script>
+</html>

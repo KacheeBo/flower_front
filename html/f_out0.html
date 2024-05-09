@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鲜花库存管理系统-鲜花页面</title>
+    <link rel="stylesheet" href="../css/flower.css">
+    <link rel="shortcut icon" href="../img/logo.png"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <script src="../static/vue.js"></script>
+</head>
+
+<body>
+<div class="sideBar">
+    <div>
+        <div class="tips">在线客服</div>
+        <ul class="list">
+            <li>tel:1846492969</li>
+            <li>tel:1846492969</li>
+        </ul>
+    </div>
+</div>
+<!--顶部logo和标题-->
+<div class="top">
+    <a class="logo" href="../html/personalPage.html">
+        <img src="../img/logo.png">
+    </a>
+    <div class="title">
+        <h1>鲜花库存管理系统</h1>
+    </div>
+</div>
+<!--下部主体区域-->
+<div class="main" id="app">
+    <div class="main-address">
+        <img src="../static/address.svg" alt="" @click="getAddrssFun">
+        <p>{{address}}</p>
+    </div>
+    <!--左部导航栏-->
+    <div class="left">
+        <ul>
+            <li style="background-color: #b17aa1"><a href="../html/index0.html">鲜花</a></li>
+            <li style="background-color: #a55199"><a href="../html/f_out0.html">折扣区</a></li>
+            <li><a href="../html/provider0.html">供应商</a></li>
+            <li><a href="../html/user0.html">订单</a></li>
+        </ul>
+    </div>
+    <!--右部主体区域-->
+    <div class="right">
+        <!--透明色背景-->
+        <div class="right1">
+            <!--搜索框-->
+            <form class="getFlower">
+                <div class="search">
+                    <input type="text" id="idFlower" name="f_name" placeholder="根据鲜花名查询" v-model="flowerName">
+                    <div class="search2" id="searchFlower" @click="queryFlower">
+                        搜索
+                    </div>
+                </div>
+            </form>
+            <!--添加信息图标-->
+            <div class="tableFlower">
+                <div class="floor-item" v-for="(item, index) in goodsList" :key="index" id="floorItem" style="height: 220px;">
+                    <div class="item-img" @click="detailFun(item.f_id)">
+                        <img :src="item.f_url" alt="">
+                    </div>
+                    <h6 class="item-title text-ellipsis">{{ item.f_name }}</h6>
+                    <p class="item-content text-ellipsis">库存：{{ item.num }}</p>
+                    <p class="item-price">原价：{{ item.beforePrice }}元</p>
+                    <p class="item-price">现价：{{ item.price }}元</p>
+                </div>
+            </div>
+            <!--弹出框-->
+            <div id="overlay" v-show="showOverlay" v-cloak>
+                <div class="popup">
+                    <p class="popup_title">提示</p>
+                    <p class="popup_content">请输入鲜花信息</p>
+                    <div class="item_bock head_p">
+                        <div class="head_img">
+                            <img :src="userInfo.avatar" @click.stop="uploadHeadImg"/>
+                        </div>
+                        <input type="file" accept="image/*" @change="handleFile" class="hiddenInput" enctype="multipart/form-data"/>
+                    </div>
+                    <form class="inseart_f">
+                        <input type="text" placeholder="名称" name="f_name" v-model="detail.f_name" id="f_name" class="f_name1"></br>
+                        <input type="text" placeholder="单价" name="price" id="price" v-model="detail.price" class="price1"></br>
+                        <input type="text" placeholder="库存数" name="num" id="num" v-model="detail.num" class="num1"></br>
+                        <div class="popup_btn">
+                            <button id="cancl1" class="cancelBtn" @click="cancelBtn">取消</button>
+                            <button type="button" id="cancl2" class="increaseButton" @click="increaseButton">确认</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--商品详情弹出框-->
+        <div class="goods-detail" id="goods-detail" v-show="showDetail" v-cloak>
+            <div class="header">
+                <p class="goods_title">商品详情</p>
+                <div class="close" id="close" @click="closeFun">×</div>
+            </div>
+            <div class="product-intro">
+                <div class="preview-wrap">
+                    <div class="banner-container">
+                        <!-- 创建图片存储容器 -->
+                        <div class="banner-img-container">
+                            <img :src="floorDetail.f_url" alt="">
+                            <img :src="floorDetail.f_url" alt="">
+                            <img :src="floorDetail.f_url" alt="">
+                            <img :src="floorDetail.f_url" alt="">
+                            <img :src="floorDetail.f_url" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="product-infor">
+                    <h6 class="product-title">{{ floorDetail.f_name }}</h6>
+                    <div class="product-introduce">主花材料:<span>卡布奇诺</span> | 款式:<span>花束</span></div>
+                    <div class="product-price"><span class="price-icon">￥</span>{{ floorDetail.price }}</div>
+                    <div class="product-line"></div>
+                    <div class="address">配送 <span class="address-name"><input v-model="floorDetail.address" type="text"></span></div>
+                    <div class="address">电话 <span class="address-name"><input v-model="floorDetail.tel" type="text"></span></div>
+                    <div class="product-line"></div>
+                    <ul class="btn-numbox">
+                        <li><span class="number">数量</span></li>
+                        <li>
+                            <ul class="count">
+                                <li @click="jianFun"><span id="num-jian" class="num-jian">-</span></li>
+                                <li><input type="text" class="input-num" id="input-num" v-model="flowerNum" value="0" @input="changeNumChange(flowerNum)" /></li>
+                                <li @click="jiaFun"><span id="num-jia" class="num-jia">+</span></li>
+                            </ul>
+                        </li>
+                        <li><span class="kucun">（库存：{{floorDetail.num}})</span></li>
+                    </ul>
+                    <div class="btn" @click="btnFun">立即购买</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+
+
+
+<script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+<!--<script type="module" src="../js/index1.js"></script>-->
+<script type="module">
+    import ajax from '../js/ajax.js'
+    // import axios from 'axios';
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            goodsList: [],
+            showDetail: false,
+            floorDetail: {
+                f_name: '',
+                num: '',
+                price: '',
+                f_url:'',
+                f_id:''
+            },
+            flowerName: '',
+            flowerNum: 0,
+            showOverlay: false,
+            userInfo: {
+                avatar: ''
+            },
+            detail: {
+                f_name: '',
+                num:'',
+                price: ''
+            },
+            zkList:[
+                {
+                    f_name: 'aa',
+                    f_id: 1
+                },
+                {
+                    f_name: 'bb',
+                    f_id: 2
+                },
+                {
+                    f_name: 'cc',
+                    f_id: 3
+                }
+            ],
+            address:''
+        },
+        mounted() {
+            this.queryAllFlower();
+            this.getAddrssFun();
+        },
+        methods: {
+            queryAllFlower() {
+                let data = [];
+                const userId = localStorage.getItem("userId");
+                axios.get("http://localhost:8080/listDiscount" + "?userId=" + `&fName=`).then(res =>{
+                    console.log(res.data)
+                    this.goodsList = res.data;
+                })
+            },
+            detailFun(val) {
+                const u_au = localStorage.getItem("u_au");
+                if (u_au == 1) {
+                    return false;
+                }
+                this.showDetail = true;
+                this.goodsList.map(item =>{
+                    if (item.f_id === val) {
+                        this.floorDetail = item;
+                    }
+                })
+
+            },
+            closeFun() {
+                this.showDetail = false;
+            },
+            queryFlower() {
+                const userId = localStorage.getItem("userId");
+                axios.get("http://localhost:8080/listDiscount?fName=" + this.flowerName + "&userId=").then(res =>{
+                    console.log(res.data)
+                    this.goodsList = res.data;
+                })
+            },
+            deleteFun(val) {
+                this.showDetail = false;
+                axios.get("http://localhost:8080/delDiscount?fId=" + val).then(res =>{
+                    console.log(res.data)
+                    this.goodsList = res.data;
+                    location.reload();
+                })
+            },
+            jianFun() {
+                if (this.flowerNum > 0) {
+                    this.flowerNum = this.flowerNum - 1
+                }
+            },
+            jiaFun() {
+                console.log(111)
+                if (this.flowerNum < this.floorDetail.num) {
+                    this.flowerNum = this.flowerNum + 1
+                }
+            },
+            openAddFun() {
+                this.showOverlay = true;
+            },
+            cancelBtn() {
+                this.showOverlay = false;
+            },
+            // 打开图片上传
+            uploadHeadImg: function () {
+                this.$el.querySelector('.hiddenInput').click()
+            },
+            // 将头像显示
+            handleFile: function (e) {
+                let $target = e.target || e.srcElement
+                console.log(e, $target.files[0], 777)
+                let file = $target.files[0]
+                this.file = file;
+                var reader = new FileReader()
+                reader.onload = (data) => {
+                    let res = data.target || data.srcElement
+                    this.userInfo.avatar = res.result
+                }
+                reader.readAsDataURL(file)
+            },
+            increaseButton() {
+                const file = new FormData();
+                file.append('file', this.file);
+                console.log(file, 'file', this.file)
+                axios.post(`http://localhost:8080/file/upload`, file).then(res =>{
+                    console.log(res.data)
+                    this.saveFlower(res.data)
+                })
+            },
+            saveFlower(val) {
+                const userId = localStorage.getItem("userId");
+                axios.get(`http://localhost:8080/addFlower?f_name=${this.detail.f_name}&price=${this.detail.price}&num=${this.detail.num}&f_url=${val}&u_id=${userId}`).then(res =>{
+                    console.log(res.data)
+                    alert('新增成功！')
+                    this.showOverlay = false;
+                })
+            },
+            btnFun() {
+                if (this.flowerNum < 1) {
+                    alert('购买数量不能等于0！')
+                    return false;
+                }
+                const data = {
+                    f_id: this.floorDetail.f_id,
+                    price:this.floorDetail.price,
+                    num: this.flowerNum,
+                    // u_id: localStorage.getItem("userId")
+                    u_id: this.floorDetail.u_id
+                }
+                axios.post(`http://localhost:8080/orderFlower`, data).then(res =>{
+                    console.log(res.data)
+                    alert('您已成功下单，请您线下收货时进行面付！')
+                    this.showDetail = false;
+                    location.reload();
+                })
+            },
+            getAddrssFun() {
+                axios.get(`http://localhost:8080/getGeo`).then(res =>{
+                    console.log(res.data)
+                    const spaceIndex = (res.data).indexOf(' ');
+                    if (spaceIndex !== -1) {
+                        // 如果找到了空格，则返回空格之前的子字符串
+                        this.address = (res.data).substring(0, spaceIndex);
+                    } else {
+                        // 如果没有找到空格，则返回原字符串
+                        this.address = (res.data)
+                    }
+                })
+            },
+            changeNumChange(val) {
+                console.log(val);
+                if (val > this.floorDetail.num) {
+                    this.flowerNum = this.floorDetail.num;
+                }
+                if (val < 0) {
+                    this.flowerNum = 0;
+                }
+            }
+        }
+    })
+</script>
+
+</html>

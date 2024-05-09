@@ -1,0 +1,373 @@
+*{
+    margin:0;
+    padding:0
+}
+li{
+    list-style:none
+}
+img{
+    vertical-align:top;
+    border:none
+}
+
+input {
+    outline: none;
+}
+
+.bg{
+    height: 100vh;
+    width: 100vw;
+    background-color: #ffe1f6;
+}
+
+.title{
+    margin-top: 30px;
+    margin-left: 40px;
+    font-size: 75px;
+    letter-spacing: 5px;
+    font-family:'Times New Roman', Times, serif;
+    color: rgb(235, 203, 25);
+    text-shadow: 2px 2px black;
+    position:absolute;
+}
+
+.illustration{
+    margin-top: 230px;
+    margin-left: 110px;
+    position: absolute;
+}
+.illustration img{
+    height: 490px;
+    width: 550px;
+}
+
+/* 花朵插画 */
+.flowerpic{
+    margin-top: 15px;
+    margin-left: 1160px;
+    position: absolute;
+    z-index: 1;
+}
+.flowerpic img{
+    height: 260px;
+    width: 260px;
+}
+
+.LoginBox{
+    margin-top: 200px;
+    margin-left: 860px;
+    background-color: #fb85ad;
+    width: 500px;
+    height: 575px;
+    position: absolute;
+    border-radius: 50px 50px 50px 50px;
+}
+
+.hello{
+    padding-top: 40px;
+    color: black;
+    font-size: 65px;
+    text-align: center;
+    font-weight: 900;
+    font-family: Impact;
+}
+
+.user{
+    padding-left: 50px;
+    padding-right: 30px;
+    padding-top: 40px;
+    width: 420px;
+    height: 220px;
+    /* background-color: rgb(100, 66, 66); */
+}
+
+.username{
+    display: flex;
+    align-items: center;
+    width: 330px;
+    height: 42px;
+    background-color: #ffe1f6;
+    border-radius: 20px;
+    color: black;
+    font-weight: 100;
+    font-size: 23px;
+    /* text-align: center; */
+    padding: 9px 0;
+    padding-left: 70px;
+    font-family: STSong;
+}
+.username img{
+    height: 20px;
+    width: 20px;
+    margin-left: -40px;
+}
+.putinUsername{
+    display: block;
+    width: 300px;
+    height: 42px;
+    background-color: #ffe1f6;
+    /* border-radius: 20px; */
+    border: none;
+    color: black;
+    font-weight: 100;
+    font-size: 23px;
+    font-family: STSong;
+    margin-left: 14px;
+}
+
+
+.putinPassword{
+    display: block;
+    width: 300px;
+    height: 42px;
+    margin-left: 14px;
+    background-color: #ffe1f6;
+    /* border-radius: 20px; */
+    border: 0px;
+    color: black;
+    font-weight: 100;
+    font-size: 23px;
+    font-family: STSong;
+}
+
+.password{
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+    width: 330px;
+    height: 42px;
+    background-color: #ffe1f6;
+    border-radius: 20px;
+    color: black;
+    font-weight: 100;
+    font-size: 23px;
+    /* text-align: center; */
+    padding: 9px 0;
+    padding-left: 70px;
+    font-family: STSong;
+}
+.password img{
+    height: 25px;
+    width: 25px;
+    margin-left: -40px;
+}
+
+.login-radio {
+    margin-top: 30px;
+}
+
+.login-radio>span {
+    margin-right: 10px;
+}
+
+/* .Button{
+    margin-top: 27px;
+    height: 60px;
+    width: 443px;
+    background-color: rgb(59, 32, 32);
+    padding-left: 57px;
+    background-origin: padding-box;
+} */
+.loginButton{
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    /* width: 123px; */
+    margin-left: 50px;
+    /* padding-top: 10px; */
+    /* padding-left: 40px; */
+    /* padding-right: 40px; */
+    width: 190px;
+    background-color: #fb4f87;
+    border-radius: 15px;
+    margin-top: 110px;
+    font-family: STSong;
+    color: white;
+    font-weight: 90;
+    font-size: 16px;
+    text-align: center;
+    float: left;
+    border: 0;
+    cursor: pointer;
+}
+/* .loginButtom a{
+    text-decoration: none;
+    color: white;
+} */
+.registerButton{
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    margin-left: 15px;
+    margin-top: 110px;
+    /* padding-top: 10px; */
+    /* padding-left: 47px; */
+    width: 190px;
+    background-color: #fb4f87;
+    border-radius: 15px;
+
+    font-family: STSong;
+    color: white;
+    font-weight: 90;
+    font-size: 16px;
+    text-align: center;
+    float: left;
+    border: 0;
+    cursor: pointer;
+}
+
+ /* 遮罩层 */
+ #overlay {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    /* IE9以下不支持rgba模式 */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 兼容IE8及以下 */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#7f000000,endColorstr=#7f000000);
+    /*display: none;*/
+    z-index: 2;
+  }
+  /* 弹出框主体 */
+  .popup {
+    background-color: #ffefff;
+    max-width: 500px;
+    min-width: 500px;
+    height: 587px;
+    border-radius: 5px;
+    margin: 100px auto;
+    text-align: center;
+    font-family: STSong;
+  }
+  /* 弹出框的标题 */
+  .popup_title {
+    height: 60px;
+    line-height: 60px;
+    border-bottom: solid 1px #cccccc;
+  }
+  /* 弹出框的内容 */
+  .popup_content {
+    height: 50px;
+    line-height: 50px;
+    padding: 15px 20px;
+  }
+  /* 弹出框的按钮栏 */
+  .popup_btn {
+    padding-bottom: 10px;
+    margin-top: 40px;
+  }
+  /* 弹出框的按钮 */
+  .popup_btn button {
+    color: #fff;
+    font-family: STSong;
+    font-size: 18px;
+    width: 40%;
+    height: 40px;
+    cursor: pointer;
+    border: 0;
+    margin: 5px 10px;
+    color: #ffffff;
+    background-color: #fb4f87;
+      border-radius: 5px;
+  }
+
+  .verificationCode{
+      display: flex;
+      align-items: center;
+      margin-top: 30px;
+  }
+
+  #inputVer {
+      width: 227px;
+      height: 55px;
+      border-radius: 17px;
+      border: none;
+      background-color: #ffe1f6;
+      padding: 0px 15px;
+  }
+#code1{
+    width: 130px;
+    height: 55px;
+    margin-left: 10px;
+    /* background-color: rgb(77, 172, 196); */
+}
+.registAccount{
+    width: 300px;
+    height: 35px;
+    background-color: #ffe1f6;
+    border: 0;
+    color: rgb(164, 164, 164);
+    font-family: STSong;
+    padding: 0px 20px;
+}
+.registPassword{
+    width: 300px;
+    height: 35px;
+    margin-top: 20px;
+    background-color: #ffe1f6;
+    border: 0;
+    color: gray;
+    font-family: STSong;
+    padding: 0px 20px;
+}
+.registAu{
+    width: 300px;
+    height: 35px;
+    margin-top: 20px;
+    background-color: #ffe1f6;
+    border: 0;
+    color: gray;
+    font-family: STSong;
+    padding: 0px 20px;
+}
+.registTel{
+    width: 300px;
+    height: 35px;
+    margin-top: 20px;
+    background-color: #ffe1f6;
+    border: 0;
+    color: gray;
+    font-family: STSong;
+    padding: 0px 20px;
+}
+
+.item_bock {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 94px;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f7f7f7;
+}
+.head_p {
+height: 93px;
+}
+.head_img{
+height: 90px;
+width: 90px;
+background-color: #8a8a8a;
+border-radius:50px;
+    margin: 0 auto;
+}
+.head_img img{
+width:90px;
+height:90px;
+border-radius:50px;
+    cursor: pointer;
+}
+.hiddenInput{
+display: none;
+}
+
+img {
+     width: 100%;
+    height: 100%;
+}
+
+[v-cloak] {
+    display: none;
+}
